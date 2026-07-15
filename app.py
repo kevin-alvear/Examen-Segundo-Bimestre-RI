@@ -12,7 +12,8 @@ from sentence_transformers import SentenceTransformer
 # 1. Configuración de la interfaz
 st.set_page_config(page_title="arXiv RAG Chat", page_icon="📚", layout="centered")
 st.title("📚 Chat RAG - Búsqueda en arXiv")
-st.write("Interfaz local para consultar el corpus científico de arXiv.")
+st.write("Elaborado por: Kevin Alvear.")
+st.write("Interfaz local para consultar el corpus de arXiv.")
 
 # 2. Descargar y cachear recursos de NLTK de forma segura
 @st.cache_resource
