@@ -50,16 +50,29 @@ except FileNotFoundError as e:
     st.error("ERROR: No se encontraron los archivos procesados. Ejecuta tu notebook primero para generar 'arxiv_corpus_processed.csv' y 'arxiv_embeddings.npy'.")
     st.stop()
 
-# 4. Configurar la API Key de Gemini desde tu gapi.txt
+# 4. Configurar la API Key de Gemini (Compatible con local y nube)
 if "gemini_configured" not in st.session_state:
-    try:
-        with open('gapi.txt', 'r') as file:
-            api_key = file.read().strip()
+    api_key = None
+
+    # Intento 1: Buscar en los Secretos de Streamlit (Para la nube)
+    if "GEMINI_API_KEY" in st.secrets:
+        api_key = st.secrets["GEMINI_API_KEY"]
+
+    # Intento 2: Buscar en el archivo local gapi.txt (Para tu PC local)
+    else:
+        try:
+            with open('gapi.txt', 'r') as file:
+                api_key = file.read().strip()
+        except FileNotFoundError:
+            pass
+
+    # Configurar el modelo si encontramos la clave en algún lado
+    if api_key:
         genai.configure(api_key=api_key)
         st.session_state.gemini_model = genai.GenerativeModel('gemini-3.1-flash-lite')
         st.session_state.gemini_configured = True
-    except FileNotFoundError:
-        st.error("ERROR: No se encontró el archivo 'gapi.txt' en esta carpeta.")
+    else:
+        st.error("ERROR: No se configuró la API Key de Gemini. Agrega 'GEMINI_API_KEY' en los Secrets de Streamlit (Nube) o crea un archivo 'gapi.txt' (Local).")
         st.stop()
 
 # 5. Funciones auxiliares de tu cuaderno
