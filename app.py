@@ -99,7 +99,7 @@ html, body, [class*='css'] {
 }
 </style>
 """
-st.markdown(css_style, unsafe_html=True)
+st.markdown(css_style, unsafe_allow_html=True)
 
 # Cabecera Institucional
 st.markdown(
@@ -107,7 +107,7 @@ st.markdown(
     "    <div class='epn-title'>ESCUELA POLITÉCNICA NACIONAL</div>"
     "    <div class='epn-subtitle'>Facultad de Ingeniería de Sistemas | Recuperación de Información</div>"
     "</div>",
-    unsafe_html=True
+    unsafe_allow_html=True
 )
 
 # Sección de Firma y Créditos Académicos (Kevin Alvear)
