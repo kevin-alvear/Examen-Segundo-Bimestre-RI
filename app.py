@@ -7,7 +7,7 @@ import faiss
 import google.generativeai as genai
 
 # ==========================================
-# 1. DESCARGA SEGURA DE RECURSOS NLTK
+# 1. RECURSOS NLTK (cache)
 # ==========================================
 @st.cache_resource
 def download_nltk_resources():
@@ -18,7 +18,7 @@ def download_nltk_resources():
         nltk.download('wordnet', quiet=True)
         nltk.download('omw-1.4', quiet=True)
     except Exception as e:
-        st.warning(f"Advertencia al descargar recursos de NLTK: {e}")
+        st.warning(f"Advertencia NLTK: {e}")
 
 download_nltk_resources()
 
@@ -36,131 +36,117 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilos CSS modernos y profesionales (sin elementos de créditos ni proyectos)
-css_style = """
+# Estilos CSS profesionales y minimalistas
+st.markdown("""
 <style>
-    /* Reset y fuente */
-    html, body, [class*="css"] {
-        font-family: 'Inter', 'Segoe UI', sans-serif;
-        background-color: #f8fafc;
+    /* Estilo general */
+    .main {
+        background-color: #f8f9fa;
     }
-    .main-header {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        padding: 2rem 2rem 1.5rem 2rem;
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 0rem;
+    }
+    h1, h2, h3 {
+        color: #1f2a3a;
+    }
+    /* Encabezado principal */
+    .rag-header {
+        background: linear-gradient(135deg, #0b1a2e 0%, #1a2f44 100%);
+        padding: 1.8rem 2rem;
         border-radius: 16px;
-        margin-bottom: 2rem;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-        text-align: center;
+        margin-bottom: 1.5rem;
+        color: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     }
-    .main-header h1 {
-        color: #ffffff;
+    .rag-header h1 {
         font-size: 2.2rem;
-        font-weight: 600;
+        font-weight: 700;
         margin: 0;
         letter-spacing: -0.5px;
+        color: white;
     }
-    .main-header p {
-        color: #94a3b8;
+    .rag-header p {
         font-size: 1rem;
         margin: 0.3rem 0 0 0;
-        font-weight: 400;
+        opacity: 0.8;
+        color: #d0dce8;
     }
-    .section-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #0f172a;
-        margin-top: 1.5rem;
-        margin-bottom: 0.75rem;
-        border-bottom: 3px solid #e2e8f0;
-        padding-bottom: 0.3rem;
-    }
-    .suggestion-btn {
-        background-color: #ffffff;
-        border: 1px solid #cbd5e1;
-        border-radius: 30px;
-        padding: 0.4rem 1.2rem;
-        font-size: 0.85rem;
+    .rag-header .badge {
+        display: inline-block;
+        background: rgba(255,255,255,0.12);
+        padding: 0.2rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
         font-weight: 500;
-        color: #1e293b;
-        transition: all 0.15s ease;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-        width: 100%;
-        text-align: center;
+        margin-top: 0.5rem;
+        color: #b0c9e0;
     }
-    .suggestion-btn:hover {
-        background-color: #0f172a;
-        color: #ffffff;
-        border-color: #0f172a;
-        cursor: pointer;
-    }
-    /* Sidebar más limpio */
-    .css-1d391kg, .css-1d391kg p {
-        font-size: 0.9rem;
-    }
-    .sidebar-status {
-        background-color: #f1f5f9;
-        border-radius: 10px;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
-        font-size: 0.85rem;
-    }
-    .stButton>button {
-        border-radius: 30px !important;
-        background: #ffffff !important;
-        border: 1px solid #e2e8f0 !important;
-        color: #1e293b !important;
-        font-weight: 500 !important;
-        font-size: 0.85rem !important;
-        padding: 0.4rem 1.2rem !important;
-        transition: 0.15s;
-    }
-    .stButton>button:hover {
-        background: #0f172a !important;
-        color: #ffffff !important;
-        border-color: #0f172a !important;
-    }
-    .chat-message {
+    /* Tarjeta de estado en sidebar */
+    .status-card {
         background: #ffffff;
         border-radius: 12px;
-        padding: 1rem;
-        border: 1px solid #e2e8f0;
-        margin-bottom: 0.75rem;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        padding: 0.8rem 1rem;
+        border: 1px solid #e9edf4;
+        margin-top: 0.5rem;
     }
-    .footer {
-        margin-top: 3rem;
-        text-align: center;
-        color: #94a3b8;
-        font-size: 0.75rem;
-        border-top: 1px solid #e2e8f0;
-        padding-top: 1.5rem;
+    .status-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        padding: 0.2rem 0;
+        border-bottom: 1px solid #f0f2f6;
     }
-    .badge {
-        background: #e2e8f0;
-        padding: 0.2rem 0.7rem;
-        border-radius: 30px;
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: #1e293b;
-        display: inline-block;
-        margin-right: 0.3rem;
+    .status-item:last-child {
+        border-bottom: none;
+    }
+    .status-label {
+        color: #5a6a7a;
+    }
+    .status-value {
+        font-weight: 500;
+        color: #0b1a2e;
+    }
+    /* Botones de sugerencia */
+    .suggestion-btn {
+        border-radius: 30px !important;
+        border: 1px solid #d0d8e0 !important;
+        background: white !important;
+        color: #1f2a3a !important;
+        font-weight: 500 !important;
+        font-size: 0.8rem !important;
+        padding: 0.3rem 0.8rem !important;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+    }
+    .suggestion-btn:hover {
+        background: #eef2f7 !important;
+        border-color: #a0b0c0 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    /* Ocultar elementos no deseados */
+    .css-1v3fvcr, .css-1v3fvcr a {
+        display: none;
+    }
+    footer {
+        visibility: hidden;
     }
 </style>
-"""
-st.markdown(css_style, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # ==========================================
-# 3. CABECERA PRINCIPAL (sin autoria ni proyecto)
+# 3. ENCABEZADO PROFESIONAL
 # ==========================================
 st.markdown("""
-<div class="main-header">
+<div class="rag-header">
     <h1>📄 arXiv RAG Assistant</h1>
     <p>Búsqueda semántica y generación aumentada por recuperación sobre resúmenes de arXiv</p>
+    <span class="badge">⚡ FAISS + Cross-Encoder · Gemini</span>
 </div>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 4. CARGA DE RECURSOS (CACHÉ)
+# 4. CARGA DE RECURSOS (cache)
 # ==========================================
 @st.cache_resource
 def load_rag_resources():
@@ -176,26 +162,29 @@ def load_rag_resources():
 try:
     df, faiss_index, bi_encoder, cross_encoder = load_rag_resources()
 except FileNotFoundError:
-    st.error("❌ No se encontraron los archivos procesados. Asegúrate de que 'arxiv_corpus_processed.csv' y 'arxiv_embeddings.npy' estén disponibles.")
+    st.error("❌ Error: archivos procesados no encontrados. Asegúrate de que 'arxiv_corpus_processed.csv' y 'arxiv_embeddings.npy' estén en el repositorio.")
     st.stop()
 
 # ==========================================
 # 5. CONFIGURACIÓN DE GEMINI
 # ==========================================
 if "gemini_configured" not in st.session_state:
-    api_key = st.secrets.get("GEMINI_API_KEY", None)
-    if not api_key:
+    api_key = None
+    if "GEMINI_API_KEY" in st.secrets:
+        api_key = st.secrets["GEMINI_API_KEY"]
+    else:
         try:
             with open('gapi.txt', 'r') as f:
                 api_key = f.read().strip()
         except FileNotFoundError:
             pass
+
     if api_key:
         genai.configure(api_key=api_key)
         st.session_state.gemini_model = genai.GenerativeModel('gemini-3.1-flash-lite')
         st.session_state.gemini_configured = True
     else:
-        st.error("❌ API Key de Gemini no configurada. Agrega 'GEMINI_API_KEY' en los secrets o en 'gapi.txt'.")
+        st.error("❌ API Key de Gemini no configurada. Configúrala en Secrets o en un archivo 'gapi.txt'.")
         st.stop()
 
 # ==========================================
@@ -217,68 +206,71 @@ def search_documents(query, k=10):
     return np.array(distances[0]).flatten(), np.array(indices[0]).flatten()
 
 # ==========================================
-# 7. BARRA LATERAL (configuración)
+# 7. BARRA LATERAL (configuración + estado)
 # ==========================================
 with st.sidebar:
     st.markdown("### ⚙️ Configuración")
-    k_retrieved = st.slider("Documentos a recuperar (K)", min_value=3, max_value=10, value=5)
-    use_reranking = st.checkbox("Activar re‑ranking con Cross‑Encoder", value=True)
+    k_retrieved = st.slider("Documentos a recuperar (K)", 3, 10, 5)
+    use_reranking = st.checkbox("Activar re-ranking con Cross-Encoder", value=True)
 
     st.markdown("---")
     st.markdown("### 📊 Estado")
-    st.markdown(f"<div class='sidebar-status'>📚 {len(df)} resúmenes</div>", unsafe_allow_html=True)
-    st.markdown("<div class='sidebar-status'>🔍 FAISS L2 activo</div>", unsafe_allow_html=True)
-    if use_reranking:
-        st.markdown("<div class='sidebar-status'>⚡ Re‑ranking activo</div>", unsafe_allow_html=True)
-    else:
-        st.markdown("<div class='sidebar-status'>⏳ Re‑ranking inactivo</div>", unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="status-card">
+        <div class="status-item"><span class="status-label">Abstracts</span><span class="status-value">{len(df)}</span></div>
+        <div class="status-item"><span class="status-label">Índice</span><span class="status-value">FAISS L2</span></div>
+        <div class="status-item"><span class="status-label">Re-ranking</span><span class="status-value">{'✅ Activo' if use_reranking else '❌ Inactivo'}</span></div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("---")
+    st.caption("arXiv RAG Assistant · Recuperación de Información")
 
 # ==========================================
-# 8. ÁREA PRINCIPAL: CONSULTAS SUGERIDAS
+# 8. ÁREA PRINCIPAL: SUGERENCIAS Y CHAT
 # ==========================================
-st.markdown('<div class="section-title">💬 Consulta semántica</div>', unsafe_allow_html=True)
+st.markdown("### 💬 Realizar consulta")
 st.markdown("Escribe tu pregunta en el chat o prueba con estas sugerencias:")
 
-cols = st.columns(4)
-sugerencias = {
-    "📈 Graph Neural Networks": "What are the main applications of Graph Neural Networks?",
-    "🤖 RL in Robotics": "How is reinforcement learning used in robotics?",
-    "🎨 Diffusion Models": "Recent advances in diffusion models for image generation.",
-    "⚡ Improving RAG": "Techniques for improving retrieval-augmented generation systems."
-}
-
+col1, col2, col3, col4 = st.columns(4)
 sugerencia_pulsada = ""
-for col, (label, query) in zip(cols, sugerencias.items()):
-    if col.button(label, use_container_width=True, key=label):
-        sugerencia_pulsada = query
+
+with col1:
+    if st.button("📈 Graph Neural Networks", use_container_width=True, key="sug1"):
+        sugerencia_pulsada = "What are the main applications of Graph Neural Networks?"
+with col2:
+    if st.button("🤖 RL in Robotics", use_container_width=True, key="sug2"):
+        sugerencia_pulsada = "How is reinforcement learning used in robotics?"
+with col3:
+    if st.button("🎨 Diffusion Models", use_container_width=True, key="sug3"):
+        sugerencia_pulsada = "Recent advances in diffusion models for image generation."
+with col4:
+    if st.button("⚡ Improving RAG", use_container_width=True, key="sug4"):
+        sugerencia_pulsada = "Techniques for improving retrieval-augmented generation systems."
+
+# Input del usuario
+user_query = st.chat_input("Escribe tu consulta científica sobre arXiv...", key="chat_input")
+
+# Determinar consulta final (prioriza input del usuario sobre sugerencia)
+if user_query:
+    query_final = user_query
+elif sugerencia_pulsada:
+    query_final = sugerencia_pulsada
+else:
+    query_final = None
 
 # ==========================================
-# 9. CHAT INPUT Y PROCESAMIENTO
+# 9. PROCESAMIENTO DE LA CONSULTA (con limpieza de historial)
 # ==========================================
-if "input_val" not in st.session_state:
-    st.session_state.input_val = ""
-
-if sugerencia_pulsada:
-    st.session_state.input_val = sugerencia_pulsada
-
-user_query = st.chat_input("Escribe tu consulta sobre arXiv...", key="chat_input")
-query_final = user_query if user_query else st.session_state.input_val
-
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-
 if query_final:
-    # Limpiar sugerencia para evitar repetición
-    if sugerencia_pulsada:
-        st.session_state.input_val = ""
+    # --- LIMPIAR HISTORIAL ANTERIOR ---
+    st.session_state.messages = []   # <-- Esto elimina mensajes previos
 
-    st.chat_message("user").markdown(query_final)
-    st.session_state.messages.append({"role": "user", "content": query_final})
+    # Mostrar la consulta del usuario
+    with st.chat_message("user"):
+        st.markdown(query_final)
 
+    # Procesar RAG
     with st.chat_message("assistant"):
         with st.spinner("🔍 Recuperando documentos..."):
             retrieve_k = k_retrieved * 2 if use_reranking else k_retrieved
@@ -294,7 +286,7 @@ if query_final:
                 })
 
         if use_reranking:
-            with st.spinner("⚡ Reordenando con Cross‑Encoder..."):
+            with st.spinner("🔄 Reordenando con Cross-Encoder..."):
                 pairs = [[query_final, cand["summary"]] for cand in candidates]
                 rerank_scores = cross_encoder.predict(pairs)
                 for i, score in enumerate(rerank_scores):
@@ -306,7 +298,7 @@ if query_final:
         # Construir contexto
         context_parts = []
         for i, cand in enumerate(candidates):
-            score_txt = f"Score: {cand['rerank_score']:.4f}" if use_reranking else f"Distancia: {cand['score_l2']:.4f}"
+            score_txt = f"Score: {cand['rerank_score']:.4f}" if use_reranking else f"Distancia L2: {cand['score_l2']:.4f}"
             context_parts.append(
                 f"Documento {i+1} [{score_txt}]:\n"
                 f"Título: {cand['title']}\n"
@@ -315,13 +307,14 @@ if query_final:
             )
         context = "\n\n---\n\n".join(context_parts)
 
+        # Prompt
         system_prompt = """
         Eres un asistente de investigación especializado en artículos de arXiv.
         Instrucciones:
         1. Responde únicamente usando la información del contexto proporcionado.
-        2. Si el contexto no contiene información suficiente, responde exactamente:
+        2. Si el contexto no contiene información suficiente, di exactamente:
            "No tengo suficiente información en el corpus para responder esta pregunta."
-        3. No inventes datos ni citas. Sé conciso y formal.
+        3. No inventes datos. Cita brevemente el título o categorías al responder.
         """
         user_prompt = f"Contexto:\n{context}\n\nPregunta:\n{query_final}\n\nRespuesta:"
 
@@ -329,34 +322,41 @@ if query_final:
             response = st.session_state.gemini_model.generate_content(f"{system_prompt}\n\n{user_prompt}")
             answer = response.text
         except Exception as e:
-            answer = f"Error: {str(e)}"
+            answer = f"Error al generar respuesta: {str(e)}"
 
+        # Mostrar respuesta
         st.markdown("### 📝 Respuesta")
         st.markdown(answer)
 
-        # Mostrar evidencias en pestañas
+        # Mostrar trazabilidad
         st.markdown("---")
-        st.markdown("### 📚 Evidencias utilizadas")
-        tab1, tab2 = st.tabs(["📄 Artículos", "📊 Scores"])
+        st.markdown("### 🔬 Evidencias utilizadas")
+
+        tab1, tab2 = st.tabs(["📄 Documentos", "📊 Tabla de similitud"])
 
         with tab1:
             for idx, cand in enumerate(candidates):
-                with st.expander(f"{idx+1}. {cand['title']}"):
+                with st.expander(f"Paper {idx+1}: {cand['title']}"):
                     st.write(f"**Categorías:** `{cand['terms']}`")
                     st.write(f"**Resumen:** {cand['summary']}")
 
         with tab2:
-            df_scores = pd.DataFrame([{
-                "Rank": i+1,
-                "Título": c["title"][:60] + "...",
-                "Distancia L2": round(c["score_l2"], 4),
-                "Rerank Score": round(c.get("rerank_score", 0), 4) if use_reranking else "-"
-            } for i, c in enumerate(candidates)])
-            st.dataframe(df_scores, use_container_width=True, hide_index=True)
+            table_data = []
+            for idx, cand in enumerate(candidates):
+                row = {
+                    "Rank": idx+1,
+                    "Título": cand["title"][:70] + "...",
+                    "Distancia L2": round(cand["score_l2"], 4)
+                }
+                if use_reranking:
+                    row["Score Cross-Encoder"] = round(cand["rerank_score"], 4)
+                table_data.append(row)
+            st.table(pd.DataFrame(table_data))
 
-        st.session_state.messages.append({"role": "assistant", "content": answer})
+        # Guardar en sesión (opcional, para mantener el último mensaje si se recarga)
+        st.session_state.messages = [{"role": "user", "content": query_final},
+                                     {"role": "assistant", "content": answer}]
 
-# ==========================================
-# 10. PIE DE PÁGINA (opcional, sin créditos)
-# ==========================================
-st.markdown('<div class="footer">arXiv RAG Assistant · Recuperación de Información</div>', unsafe_allow_html=True)
+else:
+    # Si no hay consulta, mostrar un mensaje inicial (no necesario)
+    st.info("👋 Realiza una consulta para comenzar.")
