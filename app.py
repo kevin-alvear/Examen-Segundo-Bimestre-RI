@@ -22,7 +22,7 @@ def download_nltk_resources():
 
 download_nltk_resources()
 
-# Importación de herramientas una vez garantizadas las descargas
+# Importaciones adicionales de procesamiento
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from sentence_transformers import SentenceTransformer, CrossEncoder
@@ -37,127 +37,102 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilo CSS Personalizado - Paleta de colores Premium y Académica (Azul Marino y Dorado)
-st.markdown("""
-    <style>
-        /* Tipografía y fondo general */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        html, body, [class*="css"] {
-            font-family: 'Inter', sans-serif;
-        }
+# Estilos CSS inyectados de forma segura (sin triples comillas problemáticas)
+css_style = (
+    "<style>"
+    "html, body, [class*='css'] { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }"
+    ".epn-banner { "
+    "    background: linear-gradient(135deg, #0A192F 0%, #172A45 100%); "
+    "    padding: 25px; "
+    "    border-radius: 12px; "
+    "    margin-bottom: 20px; "
+    "    color: white; "
+    "    border-left: 8px solid #D4AF37; "
+    "    text-align: center; "
+    "    box-shadow: 0 4px 15px rgba(0,0,0,0.1); "
+    "}"
+    ".epn-title { font-size: 26px !important; font-weight: 700 !important; margin: 0 !important; letter-spacing: 1px; color: #ffffff !important; }"
+    ".epn-subtitle { font-size: 13px !important; margin: 5px 0 0 0 !important; color: #D4AF37 !important; font-weight: 600; text-transform: uppercase; }"
+    ".credits-box { "
+    "    background-color: #ffffff; "
+    "    border: 1px solid #e2e8f0; "
+    "    padding: 15px; "
+    "    border-radius: 10px; "
+    "    margin-bottom: 25px; "
+    "    box-shadow: 0 2px 8px rgba(0,0,0,0.05); "
+    "    border-right: 6px solid #0A192F; "
+    "}"
+    ".credits-title { color: #0A192F; font-weight: 700; margin-bottom: 5px; font-size: 15px; }"
+    ".stButton>button { "
+    "    border-radius: 8px !important; "
+    "    border: 1px solid #172A45 !important; "
+    "    background-color: #ffffff !important; "
+    "    color: #172A45 !important; "
+    "    font-weight: 500 !important; "
+    "    font-size: 13px !important; "
+    "    padding: 6px 12px !important; "
+    "    transition: all 0.2s ease; "
+    "}"
+    ".stButton>button:hover { "
+    "    background-color: #172A45 !important; "
+    "    color: #D4AF37 !important; "
+    "    border-color: #D4AF37 !important; "
+    "}"
+    "</style>"
+)
+st.markdown(css_style, unsafe_html=True)
 
-        /* Banner Principal de la Escuela Politécnica Nacional */
-        .epn-banner {
-            background: linear-gradient(135deg, #0A192F 0%, #172A45 100%);
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            color: white;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            border-left: 8px solid #D4AF37; /* Dorado */
-            text-align: center;
-        }
-        .epn-title {
-            font-size: 28px !important;
-            font-weight: 700 !important;
-            margin: 0 !important;
-            letter-spacing: 1px;
-            color: #ffffff !important;
-        }
-        .epn-subtitle {
-            font-size: 14px !important;
-            margin: 6px 0 0 0 !important;
-            color: #D4AF37 !important;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
+# Cabecera Institucional
+st.markdown(
+    "<div class='epn-banner'>"
+    "    <div class='epn-title'>ESCUELA POLITÉCNICA NACIONAL</div>"
+    "    <div class='epn-subtitle'>Facultad de Ingeniería de Sistemas | Recuperación de Información</div>"
+    "</div>",
+    unsafe_html=True
+)
 
-        /* Tarjeta de Créditos de Autor */
-        .credits-box {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            padding: 18px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-right: 6px solid #0A192F;
-        }
-        .credits-title {
-            color: #0A192F;
-            font-weight: 700;
-            margin-bottom: 5px;
-            font-size: 16px;
-        }
-
-        /* Estilos de botones de sugerencias */
-        .stButton>button {
-            border-radius: 8px !important;
-            border: 1px solid #172A45 !important;
-            background-color: #ffffff !important;
-            color: #172A45 !important;
-            font-weight: 500 !important;
-            font-size: 13px !important;
-            padding: 8px 12px !important;
-            transition: all 0.2s ease;
-        }
-        .stButton>button:hover {
-            background-color: #172A45 !important;
-            color: #D4AF37 !important;
-            border-color: #D4AF37 !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-    </style>
-""", unsafe_html=True)
-
-# 1. Cabecera Institucional
-st.markdown("""
-    <div class="epn-banner">
-        <div class="epn-title">ESCUELA POLITÉCNICA NACIONAL</div>
-        <div class="epn-subtitle">Facultad de Ingeniería de Sistemas | Recuperación de Información</div>
-    </div>
-""", unsafe_html=True)
-
-# 2. Información del Estudiante y Examen (Súper elegante y formal)
-st.markdown("""
-    <div class="credits-box">
-        <table style="width:100%; border:none; border-collapse:collapse;">
-            <tr style="border:none; background-color:transparent;">
-                <td style="width:50%; border:none; padding:0; vertical-align:top;">
-                    <div class="credits-title">🎓 EVALUACIÓN ACADÉMICA</div>
-                    <span style="color:#4a5568; font-size:14px;">
-                        <strong>Examen:</strong> Segundo Bimestre<br>
-                        <strong>Tema:</strong> Arquitectura RAG de Dos Etapas (FAISS + Cross-Encoder)
-                    </span>
-                </td>
-                <td style="width:50%; border:none; padding:0; text-align:right; vertical-align:top;">
-                    <div class="credits-title">👤 AUTORÍA</div>
-                    <span style="color:#4a5568; font-size:14px;">
-                        <strong>Elaborado por:</strong> Kevin Xavier Alvear Cachipuendo<br>
-                        <strong>Docente:</strong> Dr. Iván Carrera
-                    </span>
-                </td>
-            </tr>
-        </table>
-    </div>
-""", unsafe_html=True)
+# Sección de Firma y Créditos Académicos (Kevin Alvear)
+st.markdown(
+    "<div class='credits-box'>"
+    "    <table style='width:100%; border:none; border-collapse:collapse; background-color:transparent;'>"
+    "        <tr style='border:none; background-color:transparent;'>"
+    "            <td style='width:50%; border:none; padding:0; vertical-align:top; background-color:transparent;'>"
+    "                <div class='credits-title'>🎓 EVALUACIÓN PRÁCTICA</div>"
+    "                <span style='color:#4a5568; font-size:13px;'>"
+    "                    <strong>Examen:</strong> Segundo Bimestre<br>"
+    "                    <strong>Proyecto:</strong> RAG Pipeline de Dos Etapas (FAISS + Cross-Encoder)"
+    "                </span>"
+    "            </td>"
+    "            <td style='width:50%; border:none; padding:0; text-align:right; vertical-align:top; background-color:transparent;'>"
+    "                <div class='credits-title'>👤 AUTORÍA</div>"
+    "                <span style='color:#4a5568; font-size:13px;'>"
+    "                    <strong>Elaborado por:</strong> Kevin Xavier Alvear Cachipuendo<br>"
+    "                    <strong>Docente:</strong> Dr. Iván Carrera"
+    "                </span>"
+    "            </td>"
+    "        </tr>"
+    "    </table>"
+    "</div>",
+    unsafe_html=True
+)
 
 # ==========================================
 # 3. CARGA DE RECURSOS DEL EXAMEN (CACHÉ)
 # ==========================================
 @st.cache_resource
 def load_rag_resources():
-    # Carga de datos procesados
+    # Cargar base de datos preprocesada
     df = pd.read_csv('arxiv_corpus_processed.csv')
 
-    # Carga de Embeddings de arXiv
+    # Cargar embeddings
     corpus_embeddings = np.load('arxiv_embeddings.npy').astype('float32')
 
-    # Inicialización del Índice FAISS L2
+    # Inicializar base de datos vectorial FAISS L2
     dimension = corpus_embeddings.shape[1]
     faiss_index = faiss.IndexFlatL2(dimension)
     faiss_index.add(corpus_embeddings)
 
-    # Modelos del Pipeline RAG
+    # Modelos del flujo
     bi_encoder = SentenceTransformer('all-MiniLM-L6-v2')
     cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
@@ -166,7 +141,7 @@ def load_rag_resources():
 try:
     df, faiss_index, bi_encoder, cross_encoder = load_rag_resources()
 except FileNotFoundError:
-    st.error("❌ ERROR: No se encontraron los archivos procesados. Sube 'arxiv_corpus_processed.csv' y 'arxiv_embeddings.npy' a tu GitHub.")
+    st.error("❌ ERROR: No se encontraron los archivos procesados. Asegúrate de que 'arxiv_corpus_processed.csv' y 'arxiv_embeddings.npy' estén en tu GitHub.")
     st.stop()
 
 # ==========================================
@@ -188,11 +163,11 @@ if "gemini_configured" not in st.session_state:
         st.session_state.gemini_model = genai.GenerativeModel('gemini-3.1-flash-lite')
         st.session_state.gemini_configured = True
     else:
-        st.error("❌ ERROR: API Key de Gemini no configurada. Añádela en los Secrets de Streamlit o localmente en 'gapi.txt'.")
+        st.error("❌ ERROR CRÍTICO: No se ha configurado la API Key de Gemini. Agrégala en los Secrets de la nube o en un archivo local 'gapi.txt'.")
         st.stop()
 
 # ==========================================
-# 5. FUNCIONES DE PROCESAMIENTO
+# 5. FUNCIONES AUXILIARES DE PROCESAMIENTO
 # ==========================================
 def clean_text(text):
     if pd.isna(text):
@@ -212,74 +187,89 @@ def search_documents(query, k=10):
 # ==========================================
 # 6. CONFIGURACIONES DE LA BARRA LATERAL
 # ==========================================
-st.sidebar.markdown("""
-    <div style="text-align:center; padding-bottom:10px;">
-        <h3 style="color:#0A192F; margin:0; font-weight:700;">🛠️ CONFIGURACIÓN</h3>
-        <p style="font-size:12px; color:#64748B;">Ajuste de Parámetros RAG</p>
-    </div>
-""", unsafe_html=True)
+st.sidebar.markdown(
+    "<div style='text-align:center; padding-bottom:10px;'>"
+    "    <h3 style='color:#0A192F; margin:0; font-weight:700;'>🛠️ CONFIGURACIÓN</h3>"
+    "    <p style='font-size:12px; color:#64748B;'>Calibración del RAG</p>"
+    "</div>",
+    unsafe_html=True
+)
 
-k_retrieved = st.sidebar.slider("Documentos finales (K)", min_value=3, max_value=10, value=5)
+k_retrieved = st.sidebar.slider("Documentos finales a recuperar (K)", min_value=3, max_value=10, value=5)
 use_reranking = st.sidebar.checkbox("Activar Re-ranking (Cross-Encoder)", value=True)
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 📊 Estado del Pipeline")
-st.sidebar.success(f"Base de Datos: {len(df)} Registros")
-st.sidebar.success("Buscador FAISS: Listo")
-st.sidebar.success("Generador Gemini: Listo")
+st.sidebar.markdown("### 📊 Estado de Recursos")
+st.sidebar.success(f"Base de Datos: {len(df)} abstracts")
+st.sidebar.success("Índice FAISS L2: Activo")
+if use_reranking:
+    st.sidebar.success("Filtro Re-ranking: Activo")
+else:
+    st.sidebar.warning("Filtro Re-ranking: Inactivo")
 
 # ==========================================
-# 7. SECCIÓN DE SUGERENCIAS Y ENTRADA DE TEXTO
+# 7. MANEJO DE SUGERENCIAS E INPUT DEL USUARIO
 # ==========================================
-st.write("### 💬 Realiza tu consulta")
-st.write("Escribe tu propia pregunta en la barra inferior o haz clic en cualquiera de las consultas sugeridas del examen:")
+st.write("### 💬 Realizar Consulta Semántica")
+st.write("Escribe tu pregunta directamente en la barra de chat inferior, o haz clic en cualquiera de las consultas sugeridas del examen para autocompletar e iniciar la búsqueda:")
 
-# Botones rápidos con las preguntas exactas del PDF
+# Botones rápidos con consultas del examen
 col1, col2, col3, col4 = st.columns(4)
-query_to_execute = ""
+sugerencia_pulsada = ""
 
 with col1:
     if st.button("📈 Graph Neural Networks", use_container_width=True):
-        query_to_execute = "What are the main applications of Graph Neural Networks?"
+        sugerencia_pulsada = "What are the main applications of Graph Neural Networks?"
 with col2:
     if st.button("🤖 RL in Robotics", use_container_width=True):
-        query_to_execute = "How is reinforcement learning used in robotics?"
+        sugerencia_pulsada = "How is reinforcement learning used in robotics?"
 with col3:
     if st.button("🎨 Diffusion Models", use_container_width=True):
-        query_to_execute = "Recent advances in diffusion models for image generation."
+        sugerencia_pulsada = "Recent advances in diffusion models for image generation."
 with col4:
     if st.button("⚡ Improving RAG", use_container_width=True):
-        query_to_execute = "Techniques for improving retrieval-augmented generation systems."
+        sugerencia_pulsada = "Techniques for improving retrieval-augmented generation systems."
 
-# Entrada de texto personalizada del usuario
-user_text_input = st.chat_input("Escribe tu consulta científica sobre arXiv aquí...")
+# Variable de control en session_state para inyectar sugerencias de forma limpia
+if "input_val" not in st.session_state:
+    st.session_state.input_val = ""
 
-# La consulta final será la que venga de la barra de texto o la del botón pulsado
-final_query = user_text_input if user_text_input else query_to_execute
+if sugerencia_pulsada:
+    st.session_state.input_val = sugerencia_pulsada
+
+# Campo de entrada de texto
+user_query = st.chat_input("Escribe tu consulta científica sobre arXiv aquí...", key="chat_input")
+
+# Si el usuario hace clic en una sugerencia, la consulta a procesar será la de la sugerencia
+query_final = user_query if user_query else st.session_state.input_val
 
 # ==========================================
-# 8. EJECUCIÓN Y RENDERIZADO DEL CHAT
+# 8. EJECUCIÓN DEL PIPELINE Y VISUALIZACIÓN
 # ==========================================
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Mostrar el historial acumulado en la pantalla
+# Dibujar mensajes previos en pantalla
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Si hay una consulta activa (sea escrita o pulsada en un botón)
-if final_query:
-    # 1. Registrar y pintar la pregunta del usuario
-    st.chat_message("user").markdown(final_query)
-    st.session_state.messages.append({"role": "user", "content": final_query})
+# Si el sistema recibe una consulta (sea manual o autocompletada)
+if query_final:
+    # 1. Limpiar la variable temporal para evitar bucles de renderizado
+    if sugerencia_pulsada:
+        st.session_state.input_val = ""
 
-    # 2. Procesar y generar respuesta
+    # 2. Registrar y dibujar mensaje del usuario en pantalla
+    st.chat_message("user").markdown(query_final)
+    st.session_state.messages.append({"role": "user", "content": query_final})
+
+    # 3. Procesamiento RAG de Dos Etapas en el bloque del Asistente
     with st.chat_message("assistant"):
-        with st.spinner("Recuperando documentos semánticos en FAISS..."):
-            # Si se usa Re-ranking recuperamos el doble de candidatos para reordenar
+        with st.spinner("1/2 Recuperando candidatos semánticos en FAISS L2..."):
+            # Si hay Re-ranking, recuperamos el doble de candidatos para reordenarlos
             retrieve_k = k_retrieved * 2 if use_reranking else k_retrieved
-            distances, indices = search_documents(final_query, k=retrieve_k)
+            distances, indices = search_documents(query_final, k=retrieve_k)
 
             candidates = []
             for dist, idx in zip(distances, indices):
@@ -290,55 +280,54 @@ if final_query:
                     "score_l2": float(dist)
                 })
 
-        # Paso de Re-ranking de dos etapas (Requerimiento Clave)
         if use_reranking:
-            with st.spinner("Reordenando resultados con Cross-Encoder..."):
-                pairs = [[final_query, cand["summary"]] for cand in candidates]
+            with st.spinner("2/2 Reordenando candidatos con Cross-Encoder..."):
+                pairs = [[query_final, cand["summary"]] for cand in candidates]
                 rerank_scores = cross_encoder.predict(pairs)
                 for i, score in enumerate(rerank_scores):
                     candidates[i]["rerank_score"] = float(score)
 
-                # Ordenar descendente (mayor puntaje del Cross-Encoder es mejor)
+                # Orden descendente (más alto es mejor)
                 candidates = sorted(candidates, key=lambda x: x["rerank_score"], reverse=True)[:k_retrieved]
         else:
-            # Ordenar ascendente (menor distancia vectorial es mejor)
+            # Orden ascendente (menor distancia vectorial es mejor)
             candidates = sorted(candidates, key=lambda x: x["score_l2"])[:k_retrieved]
 
-        # Crear el contexto unificado para el LLM
+        # Construir el contexto para Gemini
         context_parts = []
         for i, cand in enumerate(candidates):
-            score_label = f"Score Re-ranking: {cand['rerank_score']:.4f}" if use_reranking else f"Distancia L2: {cand['score_l2']:.4f}"
+            score_txt = f"Score Re-ranking: {cand['rerank_score']:.4f}" if use_reranking else f"Distancia L2: {cand['score_l2']:.4f}"
             context_parts.append(
-                f"Documento {i+1} [{score_label}]:\n"
+                f"Documento {i+1} [{score_txt}]:\n"
                 f"Título: {cand['title']}\n"
                 f"Categorías: {cand['terms']}\n"
                 f"Resumen: {cand['summary'][:800]}..."
             )
         context = "\n\n---\n\n".join(context_parts)
 
-        # Prompt de sistema restrictivo para evitar alucinaciones (Rúbrica de evaluación)
+        # Prompt restrictivo para evitar alucinaciones
         system_prompt = """
         Eres un asistente de investigacion de la Escuela Politecnica Nacional especializado en arXiv.
         Instrucciones estrictas:
         1. Responde unicamente usando la informacion del contexto proporcionado de manera muy formal y resumida.
-        2. Si el contexto no contiene informacion suficiente para responder, debes decir textualmente:
+        2. Si el contexto no contiene informacion suficiente para responder, debes decir exactamente:
            "No tengo suficiente informacion en el corpus para responder esta pregunta."
         3. No asumas ni inventes datos cientificos. Cita brevemente el autor o titulo al responder.
         """
-        user_prompt = f"Contexto de evidencias:\n{context}\n\nPregunta:\n{final_query}\n\nRespuesta:"
+        user_prompt = f"Contexto de evidencias:\n{context}\n\nPregunta:\n{query_final}\n\nRespuesta:"
 
-        # Invocar a Gemini
+        # Generar respuesta
         try:
             response = st.session_state.gemini_model.generate_content(f"{system_prompt}\n\n{user_prompt}")
             answer = response.text
         except Exception as e:
-            answer = f"Error al generar respuesta: {str(e)}"
+            answer = f"Error al generar la respuesta semántica: {str(e)}"
 
-        # Pintar la respuesta del modelo
+        # Imprimir respuesta
         st.markdown("### 📝 Respuesta Generada (RAG)")
         st.markdown(answer)
 
-        # 3. Mostrar la Trazabilidad y Métricas de las Evidencias (Rúbrica de Recuperación)
+        # 4. Mostrar Trazabilidad e Información de Recuperación
         st.markdown("---")
         st.markdown("### 🔬 Trazabilidad y Evidencias Semánticas")
 
@@ -351,7 +340,7 @@ if final_query:
                     st.write(f"**Resumen completo:** {cand['summary']}")
 
         with tab2:
-            st.write("Tabla comparativa de scores de búsqueda inicial (FAISS) y re-ranking (Cross-Encoder):")
+            st.write("Tabla comparativa de scores de búsqueda inicial (FAISS) y reordenamiento semántico (Cross-Encoder):")
             table_data = []
             for idx, cand in enumerate(candidates):
                 row = {
@@ -365,5 +354,5 @@ if final_query:
 
             st.table(pd.DataFrame(table_data))
 
-        # Registrar la respuesta del asistente en el historial
+        # Registrar la respuesta del asistente
         st.session_state.messages.append({"role": "assistant", "content": answer})
