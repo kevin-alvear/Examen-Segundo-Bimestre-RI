@@ -46,7 +46,7 @@ def load_rag_resources():
 try:
     df, faiss_index, embedding_model = load_rag_resources()
 except FileNotFoundError as e:
-    st.error("❌ ERROR: No se encontraron los archivos procesados. Ejecuta tu notebook primero para generar 'arxiv_corpus_processed.csv' y 'arxiv_embeddings.npy'.")
+    st.error("ERROR: No se encontraron los archivos procesados. Ejecuta tu notebook primero para generar 'arxiv_corpus_processed.csv' y 'arxiv_embeddings.npy'.")
     st.stop()
 
 # 4. Configurar la API Key de Gemini desde tu gapi.txt
@@ -58,7 +58,7 @@ if "gemini_configured" not in st.session_state:
         st.session_state.gemini_model = genai.GenerativeModel('gemini-3.1-flash-lite')
         st.session_state.gemini_configured = True
     except FileNotFoundError:
-        st.error("❌ ERROR: No se encontró el archivo 'gapi.txt' en esta carpeta.")
+        st.error("ERROR: No se encontró el archivo 'gapi.txt' en esta carpeta.")
         st.stop()
 
 # 5. Funciones auxiliares de tu cuaderno
