@@ -37,103 +37,17 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilos CSS inyectados usando un formato crudo limpio de Python (Raw String)
-css_style = """
-<style>
-html, body, [class*='css'] {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-.epn-banner {
-    background: linear-gradient(135deg, #0A192F 0%, #172A45 100%);
-    padding: 25px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    color: white;
-    border-left: 8px solid #D4AF37;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-.epn-title {
-    font-size: 26px !important;
-    font-weight: 700 !important;
-    margin: 0 !important;
-    letter-spacing: 1px;
-    color: #ffffff !important;
-}
-.epn-subtitle {
-    font-size: 13px !important;
-    margin: 5px 0 0 0 !important;
-    color: #D4AF37 !important;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-.credits-box {
-    background-color: #ffffff;
-    border: 1px solid #e2e8f0;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    border-right: 6px solid #0A192F;
-}
-.credits-title {
-    color: #0A192F;
-    font-weight: 700;
-    margin-bottom: 5px;
-    font-size: 15px;
-}
-.stButton>button {
-    border-radius: 8px !important;
-    border: 1px solid #172A45 !important;
-    background-color: #ffffff !important;
-    color: #172A45 !important;
-    font-weight: 500 !important;
-    font-size: 13px !important;
-    padding: 6px 12px !important;
-    transition: all 0.2s ease;
-}
-.stButton>button:hover {
-    background-color: #172A45 !important;
-    color: #D4AF37 !important;
-    border-color: #D4AF37 !important;
-}
-</style>
-"""
-st.markdown(css_style, unsafe_allow_html=True)
+# Estilos CSS inyectados de forma lineal para máxima compatibilidad con Python 3.14
+css_style = "<style>html, body, [class*='css'] { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; } .epn-banner { background: linear-gradient(135deg, #0A192F 0%, #172A45 100%); padding: 25px; border-radius: 12px; margin-bottom: 20px; color: white; border-left: 8px solid #D4AF37; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); } .epn-title { font-size: 26px !important; font-weight: 700 !important; margin: 0 !important; letter-spacing: 1px; color: #ffffff !important; } .epn-subtitle { font-size: 13px !important; margin: 5px 0 0 0 !important; color: #D4AF37 !important; font-weight: 600; text-transform: uppercase; } .credits-box { background-color: #ffffff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-right: 6px solid #0A192F; } .credits-title { color: #0A192F; font-weight: 700; margin-bottom: 5px; font-size: 15px; } .stButton>button { border-radius: 8px !important; border: 1px solid #172A45 !important; background-color: #ffffff !important; color: #172A45 !important; font-weight: 500 !important; font-size: 13px !important; padding: 6px 12px !important; transition: all 0.2s ease; } .stButton>button:hover { background-color: #172A45 !important; color: #D4AF37 !important; border-color: #D4AF37 !important; }</style>"
+st.markdown(css_style, unsafe_html=True)
 
-# Cabecera Institucional
-st.markdown(
-    "<div class='epn-banner'>"
-    "    <div class='epn-title'>ESCUELA POLITÉCNICA NACIONAL</div>"
-    "    <div class='epn-subtitle'>Facultad de Ingeniería de Sistemas | Recuperación de Información</div>"
-    "</div>",
-    unsafe_allow_html=True
-)
+# Cabecera Institucional en un string plano sin saltos de línea en el argumento
+html_banner = "<div class='epn-banner'><div class='epn-title'>ESCUELA POLITÉCNICA NACIONAL</div><div class='epn-subtitle'>Facultad de Ingeniería de Sistemas | Recuperación de Información</div></div>"
+st.markdown(html_banner, unsafe_html=True)
 
-# Sección de Firma y Créditos Académicos (Kevin Alvear)
-st.markdown(
-    "<div class='credits-box'>"
-    "    <table style='width:100%; border:none; border-collapse:collapse; background-color:transparent;'>"
-    "        <tr style='border:none; background-color:transparent;'>"
-    "            <td style='width:50%; border:none; padding:0; vertical-align:top; background-color:transparent;'>"
-    "                <div class='credits-title'>🎓 EVALUACIÓN PRÁCTICA</div>"
-    "                <span style='color:#4a5568; font-size:13px;'>"
-    "                    <strong>Examen:</strong> Segundo Bimestre<br>"
-    "                    <strong>Proyecto:</strong> RAG Pipeline de Dos Etapas (FAISS + Cross-Encoder)"
-    "                </span>"
-    "            </td>"
-    "            <td style='width:50%; border:none; padding:0; text-align:right; vertical-align:top; background-color:transparent;'>"
-    "                <div class='credits-title'>👤 AUTORÍA</div>"
-    "                <span style='color:#4a5568; font-size:13px;'>"
-    "                    <strong>Elaborado por:</strong> Kevin Xavier Alvear Cachipuendo<br>"
-    "                    <strong>Docente:</strong> Dr. Iván Carrera"
-    "                </span>"
-    "            </td>"
-    "        </tr>"
-    "    </table>"
-    "</div>",
-    unsafe_html=True
-)
+# Sección de Firma y Créditos Académicos (Kevin Alvear) totalmente linealizada
+html_credits = "<div class='credits-box'><table style='width:100%; border:none; border-collapse:collapse; background-color:transparent;'><tr style='border:none; background-color:transparent;'><td style='width:50%; border:none; padding:0; vertical-align:top; background-color:transparent;'><div class='credits-title'>🎓 EVALUACIÓN PRÁCTICA</div><span style='color:#4a5568; font-size:13px;'><strong>Examen:</strong> Segundo Bimestre<br><strong>Proyecto:</strong> RAG Pipeline de Dos Etapas (FAISS + Cross-Encoder)</span></td><td style='width:50%; border:none; padding:0; text-align:right; vertical-align:top; background-color:transparent;'><div class='credits-title'>👤 AUTORÍA</div><span style='color:#4a5568; font-size:13px;'><strong>Elaborado por:</strong> Kevin Xavier Alvear Cachipuendo<br><strong>Docente:</strong> Dr. Iván Carrera</span></td></tr></table></div>"
+st.markdown(html_credits, unsafe_html=True)
 
 # ==========================================
 # 3. CARGA DE RECURSOS DEL EXAMEN (CACHÉ)
@@ -207,10 +121,7 @@ def search_documents(query, k=10):
 # 6. CONFIGURACIONES DE LA BARRA LATERAL
 # ==========================================
 st.sidebar.markdown(
-    "<div style='text-align:center; padding-bottom:10px;'>"
-    "    <h3 style='color:#0A192F; margin:0; font-weight:700;'>🛠️ CONFIGURACIÓN</h3>"
-    "    <p style='font-size:12px; color:#64748B;'>Calibración del RAG</p>"
-    "</div>",
+    "<div style='text-align:center; padding-bottom:10px;'><h3 style='color:#0A192F; margin:0; font-weight:700;'>🛠️ CONFIGURACIÓN</h3><p style='font-size:12px; color:#64748B;'>Calibración del RAG</p></div>",
     unsafe_html=True
 )
 
