@@ -36,7 +36,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilos CSS profesionales y minimalistas
+# Estilos CSS profesionales + académicos
 st.markdown("""
 <style>
     /* Estilo general */
@@ -53,7 +53,7 @@ st.markdown("""
     /* Encabezado principal */
     .rag-header {
         background: linear-gradient(135deg, #0b1a2e 0%, #1a2f44 100%);
-        padding: 1.8rem 2rem;
+        padding: 1.8rem 2rem 1.2rem 2rem;
         border-radius: 16px;
         margin-bottom: 1.5rem;
         color: white;
@@ -66,20 +66,29 @@ st.markdown("""
         letter-spacing: -0.5px;
         color: white;
     }
-    .rag-header p {
-        font-size: 1rem;
-        margin: 0.3rem 0 0 0;
-        opacity: 0.8;
+    .rag-header .subtitle {
+        font-size: 0.95rem;
+        margin: 0.2rem 0 0 0;
+        opacity: 0.85;
         color: #d0dce8;
+    }
+    .rag-header .academic-info {
+        font-size: 0.75rem;
+        margin-top: 0.6rem;
+        opacity: 0.6;
+        color: #b0c9e0;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        padding-top: 0.6rem;
+        letter-spacing: 0.3px;
     }
     .rag-header .badge {
         display: inline-block;
-        background: rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.10);
         padding: 0.2rem 0.8rem;
         border-radius: 20px;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 500;
-        margin-top: 0.5rem;
+        margin-right: 0.4rem;
         color: #b0c9e0;
     }
     /* Tarjeta de estado en sidebar */
@@ -124,10 +133,22 @@ st.markdown("""
         border-color: #a0b0c0 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
-    /* Ocultar elementos no deseados */
-    .css-1v3fvcr, .css-1v3fvcr a {
-        display: none;
+    /* Footer académico */
+    .footer {
+        text-align: center;
+        font-size: 0.7rem;
+        color: #8a9aa8;
+        padding: 1.2rem 0 0.5rem 0;
+        border-top: 1px solid #e9edf4;
+        margin-top: 2rem;
     }
+    .footer span {
+        margin: 0 0.6rem;
+    }
+    .footer .sep {
+        color: #d0d8e0;
+    }
+    /* Ocultar elementos no deseados */
     footer {
         visibility: hidden;
     }
@@ -135,13 +156,19 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 3. ENCABEZADO PROFESIONAL
+# 3. ENCABEZADO CON INFORMACIÓN ACADÉMICA
 # ==========================================
 st.markdown("""
 <div class="rag-header">
     <h1>📄 arXiv RAG Assistant</h1>
-    <p>Búsqueda semántica y generación aumentada por recuperación sobre resúmenes de arXiv</p>
-    <span class="badge">⚡ FAISS + Cross-Encoder · Gemini</span>
+    <div class="subtitle">Búsqueda semántica y generación aumentada por recuperación sobre resúmenes de arXiv</div>
+    <div style="margin-top:0.3rem;">
+        <span class="badge">⚡ FAISS + Cross-Encoder</span>
+        <span class="badge">🤖 Gemini</span>
+    </div>
+    <div class="academic-info">
+        EPN · Facultad de Ingeniería de Sistemas · Recuperación de Información · Segundo Bimestre · Elaborado por Kevin Alvear
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -224,7 +251,8 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     st.markdown("---")
-    st.caption("arXiv RAG Assistant · Recuperación de Información")
+    st.caption("EPN · FIS · Recuperación de Información")
+    st.caption("Kevin Alvear · Segundo Bimestre")
 
 # ==========================================
 # 8. ÁREA PRINCIPAL: SUGERENCIAS Y CHAT
@@ -251,7 +279,7 @@ with col4:
 # Input del usuario
 user_query = st.chat_input("Escribe tu consulta científica sobre arXiv...", key="chat_input")
 
-# Determinar consulta final (prioriza input del usuario sobre sugerencia)
+# Determinar consulta final
 if user_query:
     query_final = user_query
 elif sugerencia_pulsada:
@@ -260,13 +288,13 @@ else:
     query_final = None
 
 # ==========================================
-# 9. PROCESAMIENTO DE LA CONSULTA (con limpieza de historial)
+# 9. PROCESAMIENTO DE LA CONSULTA (con limpieza)
 # ==========================================
 if query_final:
-    # --- LIMPIAR HISTORIAL ANTERIOR ---
-    st.session_state.messages = []   # <-- Esto elimina mensajes previos
+    # Limpiar historial anterior
+    st.session_state.messages = []
 
-    # Mostrar la consulta del usuario
+    # Mostrar consulta del usuario
     with st.chat_message("user"):
         st.markdown(query_final)
 
@@ -328,7 +356,7 @@ if query_final:
         st.markdown("### 📝 Respuesta")
         st.markdown(answer)
 
-        # Mostrar trazabilidad
+        # Trazabilidad
         st.markdown("---")
         st.markdown("### 🔬 Evidencias utilizadas")
 
@@ -353,10 +381,26 @@ if query_final:
                 table_data.append(row)
             st.table(pd.DataFrame(table_data))
 
-        # Guardar en sesión (opcional, para mantener el último mensaje si se recarga)
+        # Guardar en sesión
         st.session_state.messages = [{"role": "user", "content": query_final},
                                      {"role": "assistant", "content": answer}]
 
 else:
-    # Si no hay consulta, mostrar un mensaje inicial (no necesario)
     st.info("👋 Realiza una consulta para comenzar.")
+
+# ==========================================
+# 10. FOOTER ACADÉMICO (al final de la página)
+# ==========================================
+st.markdown("""
+<div class="footer">
+    <span>Escuela Politécnica Nacional</span>
+    <span class="sep">·</span>
+    <span>Facultad de Ingeniería de Sistemas</span>
+    <span class="sep">·</span>
+    <span>Recuperación de Información</span>
+    <span class="sep">·</span>
+    <span>Segundo Bimestre 2026</span>
+    <span class="sep">·</span>
+    <span>Elaborado por Kevin Alvear</span>
+</div>
+""", unsafe_allow_html=True)
