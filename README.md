@@ -1,9 +1,9 @@
 # Sistema de Recuperación Aumentada por Generación (RAG) sobre Abstracts de arXiv
 
 **Asignatura:** Recuperación de Información
-**Tipo:** Examen Final
-**Estudiante:** Kevin Xavier Alvear Cachipuendo
-**Profesor:** Dr. Iván Carrera
+**Tipo:** Examen Final<br>
+**Estudiante:** Kevin Xavier Alvear Cachipuendo<br>
+**Profesor:** Dr. Iván Carrera<br>
 **Fecha:** 15 de julio de 2026
 
 ---
